@@ -72,6 +72,7 @@ def tinyMazeSearch(problem):
     w = Directions.WEST
     return  [s, s, w, s, w, w, s, w]
 
+# Q1: 깊이 우선 탐색 #
 def depthFirstSearch(problem: SearchProblem):
     """
     Search the deepest nodes in the search tree first.
@@ -87,13 +88,81 @@ def depthFirstSearch(problem: SearchProblem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
 
+    if(problem.isGoalState(problem.getStartState())):
+        return []
+
+    from util import Stack
+    stack = Stack() # (x, y), ['dir1', 'dir2', ...]
+    stack.push((problem.getStartState(), []))
+
+    visited = [] # [(x1, y1), (x2, y2), ...]
+    visited.append(problem.getStartState())
+
+    #print("stack:", stack)
+    #print("visited:", visited)
+
+    # stack이 비어 있지 않은 동안 반복
+    while(not stack.isEmpty()):
+        currLotation, path = stack.pop() # (x, y), ['dir1', 'dir2', ...]
+        visited.append(currLotation)
+        #print("currLotation:", currLotation)
+        #print("path:", paht)
+
+        # 종료 조건 - 목표 지점이라면 path를 반환하고 종료
+        if problem.isGoalState(currLotation):
+            #print("path:", path)
+            return path
+        
+        succ = problem.getSuccessors(currLotation) # succ = [succ1, succ2, ...], succ1 = [((nx, ny), 'Dir', 1)]
+
+        #print("succ:", succ)
+
+        for nxtLotation, nxtDir, nxtCost in succ: # nxtSucc = [(nx, ny), 'Dir', 1]
+            if nxtLotation in visited:
+                continue
+            stack.push((nxtLotation, path + [nxtDir]))
+
+    return []
+    
+    #util.raiseNotDefined()
+    
+
+
+# Q2: 넓이 우선 탐색 #
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
 
+    if(problem.isGoalState(problem.getStartState())):
+        return []
+
+    from util import Queue
+    queue = Queue() # (x, y)
+    queue.push((problem.getStartState(), []))
+
+    visited = [] # (x1, y1), (x2, y2), ...
+    visited.append(problem.getStartState())
+
+    # queue가 비어 있지 않은 동안 반복
+    while(not queue.isEmpty()):
+        currLotation, path = queue.pop()
+
+        if(problem.isGoalState(currLotation)):
+            return path
+        
+        succ = problem.getSuccessors(currLotation)
+        for nxtLotation, nxtDir, nxtCost in succ:
+            if nxtLotation in visited:
+                continue
+            visited.append(nxtLotation)
+            queue.push((nxtLotation, path + [nxtDir]))
+
+    return []
+
+    #util.raiseNotDefined()
+
+# Q3: 비용 함수 변경
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
@@ -106,6 +175,7 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
+# Q4: A* 탐색
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"

@@ -29,6 +29,7 @@ import sys
 # Parts worth reading #
 #######################
 
+# agent 클래스
 class Agent:
     """
     An agent must define a getAction method, but may also define the
@@ -40,12 +41,13 @@ class Agent:
         self.index = index
 
     def getAction(self, state):
-        """
+        """ 
         The Agent will receive a GameState (from either {pacman, capture, sonar}.py) and
         must return an action from Directions.{North, South, East, West, Stop}
         """
         raiseNotDefined()
 
+# 방향 클래스
 class Directions:
     NORTH = 'North'
     SOUTH = 'South'
@@ -66,6 +68,7 @@ class Directions:
                EAST: WEST,
                WEST: EAST,
                STOP: STOP}
+
 
 class Configuration:
     """

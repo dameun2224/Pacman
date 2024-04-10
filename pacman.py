@@ -72,7 +72,7 @@ class GameState:
     ####################################################
 
     # static variable keeps track of which states have had getLegalActions called
-    explored = set() # set: 중복을 허용하지 않고, 순서가 없는 자료형 집합
+    explored = set() # 해당 게임 상태를 저장하는 집합?
     def getAndResetExplored():
         tmp = GameState.explored.copy()
         GameState.explored = set()
