@@ -61,7 +61,7 @@ class SearchProblem:
         """
         util.raiseNotDefined()
 
-
+# 예시 메소드
 def tinyMazeSearch(problem):
     """
     Returns a sequence of moves that solves tinyMaze.  For any other maze, the
@@ -72,7 +72,7 @@ def tinyMazeSearch(problem):
     w = Directions.WEST
     return  [s, s, w, s, w, w, s, w]
 
-# Q1: 깊이 우선 탐색 #
+# Q1: 깊이 우선 탐색 - solved #
 def depthFirstSearch(problem: SearchProblem):
     """
     Search the deepest nodes in the search tree first.
@@ -104,17 +104,17 @@ def depthFirstSearch(problem: SearchProblem):
 
     # stack이 비어 있지 않은 동안 반복
     while(not stack.isEmpty()):
-        currLotation, path = stack.pop() # (x, y), ['dir1', 'dir2', ...]
-        visited.append(currLotation)
-        #print("currLotation:", currLotation)
+        curLotation, path = stack.pop() # (x, y), ['dir1', 'dir2', ...]
+        visited.append(curLotation)
+        #print("curLotation:", curLotation)
         #print("path:", paht)
 
         # 종료 조건 - 목표 지점이라면 path를 반환하고 종료
-        if problem.isGoalState(currLotation):
+        if problem.isGoalState(curLotation):
             #print("path:", path)
             return path
         
-        succ = problem.getSuccessors(currLotation) # succ = [succ1, succ2, ...], succ1 = [((nx, ny), 'Dir', 1)]
+        succ = problem.getSuccessors(curLotation) # succ = [succ1, succ2, ...], succ1 = [((nx, ny), 'Dir', 1)]
 
         #print("succ:", succ)
 
@@ -129,7 +129,7 @@ def depthFirstSearch(problem: SearchProblem):
     
 
 
-# Q2: 넓이 우선 탐색 #
+# Q2: 넓이 우선 탐색 - solved #
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
@@ -146,12 +146,13 @@ def breadthFirstSearch(problem: SearchProblem):
 
     # queue가 비어 있지 않은 동안 반복
     while(not queue.isEmpty()):
-        currLotation, path = queue.pop()
+        curLotation, path = queue.pop()
 
-        if(problem.isGoalState(currLotation)):
+        # 종료 조건 - 목표 지점이라면 path를 반환하고 종료
+        if(problem.isGoalState(curLotation)):
             return path
         
-        succ = problem.getSuccessors(currLotation)
+        succ = problem.getSuccessors(curLotation)
         for nxtLotation, nxtDir, nxtCost in succ:
             if nxtLotation in visited:
                 continue
@@ -162,11 +163,44 @@ def breadthFirstSearch(problem: SearchProblem):
 
     #util.raiseNotDefined()
 
-# Q3: 비용 함수 변경
+# Q3: 비용 함수 변경 #
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    if(problem.isGoalState(problem.getStartState())):
+        return []
+    
+    from util import PriorityQueue
+    pq = PriorityQueue() # (((x, y), ['dir1', 'dir2', ...]), cost)
+    pq.push(((problem.getStartState()), []), problem.getCostOfActions([]))
+
+    print(problem.getStartState(), [], problem.getCostOfActions([]))
+
+
+    visited = [] # (x,y)
+    visited.append((problem.getStartState()))
+
+    while(not pq.isEmpty()):
+        curLotation, path = pq.pop()
+        #print("curLotation:", curLotation)
+        #print("path", path)
+
+        # 종료 조건 - 목표 지점이라면 path를 반환하고 종료
+        if(problem.isGoalState(curLotation)):
+            return path
+        
+        succ = problem.getSuccessors(curLotation)
+        for nxtLotation, nxtDir, nxtCost in succ:
+            if nxtLotation in visited:
+                continue
+            visited.append(curLotation)
+            nxtCost = problem.getCostOfActions(path + [nxtDir])
+            pq.push((nxtLotation, path + [nxtDir]), nxtCost)
+
+    return []
+
+    #util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
     """

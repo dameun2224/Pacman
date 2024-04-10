@@ -20,6 +20,17 @@ depth first search (dfs), run the following command:
 
 > python pacman.py -p SearchAgent -a fn=depthFirstSearch
 
+---
+
+이 파일에는 Pacman을 제어하기 위해 선택할 수 있는 모든 에이전트가 포함되어 있습니다.
+에이전트를 선택하려면, pacman.py를 실행 할 때 '-p' 옵션을 사용하세요. 인수는 다음과
+같습니다. '-a'를 사용하여 에이전트에 전달됩니다. 예를 들어, dfs를 사용하는 SearchAgent
+를 로드하려면 다음 명령을 실행합니다.
+
+> python pacman.py -p SearchAgent -a fn=depthFirstSearch
+
+---
+
 Commands to invoke other search strategies can be found in the project
 description.
 
@@ -43,8 +54,9 @@ import time
 import search
 import pacman
 
-class GoWestAgent(Agent):
+class GoWestAgent(Agent): 
     "An agent that goes West until it can't."
+    "west 쪽으로만 가는 agent"
 
     def getAction(self, state):
         "The agent receives a GameState (defined in pacman.py)."
