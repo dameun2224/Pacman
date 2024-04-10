@@ -163,7 +163,7 @@ def breadthFirstSearch(problem: SearchProblem):
 
     #util.raiseNotDefined()
 
-# Q3: 비용 함수 변경 #
+# Q3: 비용 함수 변경 - sloved #
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
@@ -172,31 +172,30 @@ def uniformCostSearch(problem: SearchProblem):
         return []
     
     from util import PriorityQueue
-    pq = PriorityQueue() # (((x, y), ['dir1', 'dir2', ...]), cost)
-    pq.push(((problem.getStartState()), []), problem.getCostOfActions([]))
+    pq = PriorityQueue() # (((x, y), ['dir1', 'dir2', ...], cost), cost)
+    pq.push(((problem.getStartState()), [], problem.getCostOfActions([])), problem.getCostOfActions([]))
 
-    print(problem.getStartState(), [], problem.getCostOfActions([]))
-
-
-    visited = [] # (x,y)
-    visited.append((problem.getStartState()))
+    visited = dict()
 
     while(not pq.isEmpty()):
-        curLotation, path = pq.pop()
-        #print("curLotation:", curLotation)
-        #print("path", path)
+        lotation, path, cost = pq.pop()
+        visited[lotation] = cost
+
+        #print("curLotation:", lotation)
+        #print("path:", path)
+        #print("cost:", cost)
 
         # 종료 조건 - 목표 지점이라면 path를 반환하고 종료
-        if(problem.isGoalState(curLotation)):
+        if(problem.isGoalState(lotation)):
             return path
         
-        succ = problem.getSuccessors(curLotation)
+        succ = problem.getSuccessors(lotation)
         for nxtLotation, nxtDir, nxtCost in succ:
-            if nxtLotation in visited:
+            # 방문한 적 있고, 현재 저장하려는 cost가 저장해둔 cost보다 크다면 continue
+            if (nxtLotation in visited) and (visited[nxtLotation] < cost + nxtCost):
                 continue
-            visited.append(curLotation)
-            nxtCost = problem.getCostOfActions(path + [nxtDir])
-            pq.push((nxtLotation, path + [nxtDir]), nxtCost)
+            visited[nxtLotation] = cost + nxtCost
+            pq.push((nxtLotation, path + [nxtDir], nxtCost + cost), nxtCost + cost)
 
     return []
 
