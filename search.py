@@ -163,7 +163,7 @@ def breadthFirstSearch(problem: SearchProblem):
 
     #util.raiseNotDefined()
 
-# Q3: 비용 함수 변경 - sloved #
+# Q3: 비용 함수 변경 - sloved#
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
@@ -172,7 +172,7 @@ def uniformCostSearch(problem: SearchProblem):
         return []
     
     from util import PriorityQueue
-    pq = PriorityQueue() # (((x, y), ['dir1', 'dir2', ...], cost), cost)
+    pq = PriorityQueue() # (((x, y), ['dir1', 'dir2', ...], cost), priority)
     pq.push(((problem.getStartState()), [], problem.getCostOfActions([])), problem.getCostOfActions([]))
 
     visited = dict()
@@ -212,7 +212,40 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    # A* 알고리즘에서의 total cost = cost + heuristic
+    
+    if(problem.isGoalState(problem.getStartState())):
+        return []
+    
+    from util import PriorityQueue
+    pq = PriorityQueue() # ((x, y), ['dir1', 'dir2', ...], cost, heuristic), priority (cost + heuristic)
+    pq.push(((problem.getStartState()), [], problem.getCostOfActions([]), heuristic(problem.getStartState(), problem)), problem.getCostOfActions([]) + heuristic(problem.getStartState(), problem))
+
+    visited = dict()
+    
+    while(not pq.isEmpty()):
+        lotation, path, cost, curHeuristic = pq.pop()
+
+        visited[lotation] = cost + curHeuristic
+
+        if(problem.isGoalState(lotation)):
+            return path
+        
+        succ = problem.getSuccessors(lotation)
+        for nxtLotation, nxtDir, nxtCost in succ:
+            nxtTotalCost = cost + nxtCost + heuristic(nxtLotation, problem)
+
+            # 방문한 적 있다면 continue
+            if (nxtLotation in visited) and (visited[nxtLotation] < nxtTotalCost):
+                continue
+                
+            visited[nxtLotation] = nxtTotalCost
+            pq.push((nxtLotation, path + [nxtDir], cost + nxtCost, heuristic(nxtLotation, problem)), nxtTotalCost)
+    
+    return []
+    
+    #util.raiseNotDefined()
 
 
 # Abbreviations
