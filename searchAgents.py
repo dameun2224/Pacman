@@ -385,11 +385,12 @@ class CornersProblem(search.SearchProblem):
         return len(actions)
 
 
+# Q6: 모서리 문제 - 휴리스틱 - sloved #
 def cornersHeuristic(state: Any, problem: CornersProblem):
     """
     A heuristic for the CornersProblem that you defined.
 
-      state:   The current search state (x, y)
+      state:   The current search state 
                (a data structure you chose in your search problem)
 
       problem: The CornersProblem instance for this layout.
@@ -398,10 +399,31 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     shortest path from the state to a goal of the problem; i.e.  it should be
     admissible (as well as consistent).
     """
+
+    # 일관성 - 목표 상태일 때 0 반환 / 방문했던 코너에 대한 계산 하지 않음
+    # 위 두 조건이 없어도 q4는 3/3으로 통과하나, q5는 0/3으로 통과하지 못함.
+
+    from util import manhattanDistance
+
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
+    position = state[0]
+    visitedConer = state[1]
 
-    return 0 # Default to trivial solution
+    # 목표 상태라면 0 반환
+    if problem.isGoalState(state):
+        return 0 # Default to trivial solution
+    
+    maxHeuristics = 0
+    for corner in corners:
+        # 이미 방문했던 코너에 대해서는 heuristic을 계산하지 않음
+        if visitedConer[corners.index(corner)]:
+            continue
+        curHeuristics = manhattanDistance(position, corner)
+        if curHeuristics > maxHeuristics:
+            maxHeuristics = curHeuristics
+
+    return maxHeuristics
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"

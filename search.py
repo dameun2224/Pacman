@@ -221,29 +221,29 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
         return []
     
     from util import PriorityQueue
-    pq = PriorityQueue() # ((x, y), ['dir1', 'dir2', ...], cost, heuristic), priority (cost + heuristic)
-    pq.push(((problem.getStartState()), [], problem.getCostOfActions([]), heuristic(problem.getStartState(), problem)), problem.getCostOfActions([]) + heuristic(problem.getStartState(), problem))
+    pq = PriorityQueue() # (state, ['dir1', 'dir2', ...], cost, heuristic), priority (cost + heuristic)
+    pq.push((problem.getStartState(), [], problem.getCostOfActions([]), heuristic(problem.getStartState(), problem)), problem.getCostOfActions([]) + heuristic(problem.getStartState(), problem))
 
-    visited = dict()
+    visited = []
     
     while(not pq.isEmpty()):
-        lotation, path, cost, curHeuristic = pq.pop()
+        state, path, cost, curHeuristic = pq.pop()
 
-        visited[lotation] = cost + curHeuristic
-
-        if(problem.isGoalState(lotation)):
+        if(problem.isGoalState(state)):
             return path
         
-        succ = problem.getSuccessors(lotation)
-        for nxtLotation, nxtDir, nxtCost in succ:
-            nxtTotalCost = cost + nxtCost + heuristic(nxtLotation, problem)
-
+        if(state in visited):
+            continue
+        
+        visited.append(state)
+        succ = problem.getSuccessors(state)
+        for nxtState, nxtDir, nxtCost in succ:
             # 방문한 적 있다면 continue
-            if (nxtLotation in visited) and (visited[nxtLotation] < nxtTotalCost):
+            if nxtState in visited:
                 continue
-                
-            visited[nxtLotation] = nxtTotalCost
-            pq.push((nxtLotation, path + [nxtDir], cost + nxtCost, heuristic(nxtLotation, problem)), nxtTotalCost)
+            nxtTotalCost = cost + nxtCost + heuristic(nxtState, problem)
+            # (state, path, heuristic, cost)
+            pq.update((nxtState, path + [nxtDir], cost + nxtCost, heuristic(nxtState, problem)), nxtTotalCost)
     
     return []
     
