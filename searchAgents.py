@@ -282,6 +282,7 @@ def euclideanHeuristic(position, problem, info={}):
 # This portion is incomplete.  Time to write code!  #
 #####################################################
 
+# Q5: 모든 모서리 찾기 - sloved #
 class CornersProblem(search.SearchProblem):
     """
     This search problem finds paths through all four corners of a layout.
@@ -308,14 +309,28 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        
+        visitedCorner = [False, False, False, False]
+        if(self.startingPosition in self.corners):
+            visitedCorner[self.corners.index(self.startingPosition)] = True
+
+        return (self.startingPosition, visitedCorner)
+    
+        #util.raiseNotDefined()
 
     def isGoalState(self, state: Any):
         """
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+
+        # state[1] = [bool, bool, bool, bool]
+        for isTure in state[1]:
+            if not isTure: 
+                return False # state[1]이 하나라도 거짓이라면 False 반환
+        return True
+
+        #util.raiseNotDefined()
 
     def getSuccessors(self, state: Any):
         """
@@ -338,6 +353,20 @@ class CornersProblem(search.SearchProblem):
             #   hitsWall = self.walls[nextx][nexty]
 
             "*** YOUR CODE HERE ***"
+            x, y = state[0]
+            dx, dy = Actions.directionToVector(action)
+            nxtx, nxty = int(x + dx), int(y + dy)
+
+            # 벽에 충돌하지 않았다면
+            if not self.walls[nxtx][nxty]: 
+                visitedConer = state[1].copy() # [bool, bool, bool, bool]
+                if (nxtx, nxty) in self.corners:
+                    visitedConer[self.corners.index((nxtx, nxty))] = True # 다음 방문이 코너라면 해당 코너 인덱스를 Ture로
+                nxtState = ((nxtx, nxty), visitedConer)
+                successors.append((nxtState, action, 1)) # succ의 요소는 (state, action, cost)
+        
+        #print("x, y:", x, y)
+        #print("succ:", successors)
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
@@ -360,7 +389,7 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     """
     A heuristic for the CornersProblem that you defined.
 
-      state:   The current search state
+      state:   The current search state (x, y)
                (a data structure you chose in your search problem)
 
       problem: The CornersProblem instance for this layout.
@@ -372,7 +401,6 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
-    "*** YOUR CODE HERE ***"
     return 0 # Default to trivial solution
 
 class AStarCornersAgent(SearchAgent):

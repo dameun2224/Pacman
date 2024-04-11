@@ -141,6 +141,8 @@ def breadthFirstSearch(problem: SearchProblem):
     queue = Queue() # (x, y)
     queue.push((problem.getStartState(), []))
 
+    #print("startState:", problem.getStartState())
+
     visited = [] # (x1, y1), (x2, y2), ...
     visited.append(problem.getStartState())
 
@@ -163,7 +165,7 @@ def breadthFirstSearch(problem: SearchProblem):
 
     #util.raiseNotDefined()
 
-# Q3: 비용 함수 변경 - sloved#
+# Q3: 비용 함수 변경 - sloved #
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
@@ -208,7 +210,7 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
-# Q4: A* 탐색
+# Q4: A* 탐색 - sloved #
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
