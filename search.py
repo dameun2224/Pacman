@@ -220,9 +220,11 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     if(problem.isGoalState(problem.getStartState())):
         return []
     
+    firstHeuristic = heuristic(problem.getStartState(), problem)
+    
     from util import PriorityQueue
     pq = PriorityQueue() # (state, ['dir1', 'dir2', ...], cost, heuristic), priority (cost + heuristic)
-    pq.push((problem.getStartState(), [], problem.getCostOfActions([]), heuristic(problem.getStartState(), problem)), problem.getCostOfActions([]) + heuristic(problem.getStartState(), problem))
+    pq.push((problem.getStartState(), [], problem.getCostOfActions([]), firstHeuristic), problem.getCostOfActions([]) + firstHeuristic)
 
     visited = []
     
@@ -241,9 +243,10 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
             # 방문한 적 있다면 continue
             if nxtState in visited:
                 continue
-            nxtTotalCost = cost + nxtCost + heuristic(nxtState, problem)
+            nxtHeuristic = heuristic(nxtState, problem)
+            nxtTotalCost = cost + nxtCost + nxtHeuristic
             # (state, path, heuristic, cost)
-            pq.update((nxtState, path + [nxtDir], cost + nxtCost, heuristic(nxtState, problem)), nxtTotalCost)
+            pq.update((nxtState, path + [nxtDir], cost + nxtCost, nxtHeuristic), nxtTotalCost)
     
     return []
     

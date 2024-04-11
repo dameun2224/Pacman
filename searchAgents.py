@@ -487,6 +487,7 @@ class AStarFoodSearchAgent(SearchAgent):
         self.searchFunction = lambda prob: search.aStarSearch(prob, foodHeuristic)
         self.searchType = FoodSearchProblem
 
+# Q7: 모든 점(음식) 먹기 #
 def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     """
     Your heuristic for the FoodSearchProblem goes here.
@@ -517,7 +518,23 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    return 0
+
+    #print("position:", position)
+    #print("foodGrid:", foodGrid)
+    #print(foodGrid.asList())
+
+    # 일관성 - 잘 모르겠음.
+    # 그냥 단순하게, 모든 호출되는 점에서 모든 음식과의 휴리스틱을 계산해 max 값을 리턴
+    # goalState인 경우 - food 개수가 0이고, for문이 실행되지 않음 -> 0 리턴
+    
+    maxHeuristic = 0
+    for foodPosition in foodGrid.asList():
+        heuristic = mazeDistance(position, foodPosition, problem.startingGameState) 
+        maxHeuristic = max(maxHeuristic, heuristic)
+
+    #print("maxHeuristic:", maxHeuristic)
+
+    return maxHeuristic
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
@@ -536,6 +553,7 @@ class ClosestDotSearchAgent(SearchAgent):
         self.actionIndex = 0
         print('Path found with cost %d.' % len(self.actions))
 
+    # Q8: 최적이 아닌 경로 탐색 #
     def findPathToClosestDot(self, gameState: pacman.GameState):
         """
         Returns a path (a list of actions) to the closest dot, starting from
