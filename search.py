@@ -165,7 +165,7 @@ def breadthFirstSearch(problem: SearchProblem):
 
     #util.raiseNotDefined()
 
-# Q3: 비용 함수 변경 - sloved #
+# Q3: 비용 함수 변경 - solved #
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
@@ -210,7 +210,7 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
-# Q4: A* 탐색 - sloved #
+# Q4: A* 탐색 - solved #
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"

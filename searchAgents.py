@@ -282,7 +282,7 @@ def euclideanHeuristic(position, problem, info={}):
 # This portion is incomplete.  Time to write code!  #
 #####################################################
 
-# Q5: 모든 모서리 찾기 - sloved #
+# Q5: 모든 모서리 찾기 - solved #
 class CornersProblem(search.SearchProblem):
     """
     This search problem finds paths through all four corners of a layout.
@@ -385,7 +385,7 @@ class CornersProblem(search.SearchProblem):
         return len(actions)
 
 
-# Q6: 모서리 문제 - 휴리스틱 - sloved #
+# Q6: 모서리 문제 - 휴리스틱 - solved #
 def cornersHeuristic(state: Any, problem: CornersProblem):
     """
     A heuristic for the CornersProblem that you defined.
@@ -487,7 +487,7 @@ class AStarFoodSearchAgent(SearchAgent):
         self.searchFunction = lambda prob: search.aStarSearch(prob, foodHeuristic)
         self.searchType = FoodSearchProblem
 
-# Q7: 모든 점(음식) 먹기 #
+# Q7: 모든 점(음식) 먹기 - solved #
 def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     """
     Your heuristic for the FoodSearchProblem goes here.
@@ -536,7 +536,7 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
 
     return maxHeuristic
 
-# Q8: 최적이 아닌 경로 탐색 #
+# Q8: 최적이 아닌 경로 탐색 - solved #
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
     def registerInitialState(self, state):
