@@ -48,10 +48,10 @@ class ReflexAgent(Agent):
         bestIndices = [index for index in range(len(scores)) if scores[index] == bestScore]
         chosenIndex = random.choice(bestIndices) # Pick randomly among the best
 
-        print("\n---getAction---")
-        print("legalMoves: ", legalMoves)
-        print("bestScore: ", bestScore)
-        print("chosenIndex: ", chosenIndex)
+        #print("\n---getAction---")
+        #print("legalMoves: ", legalMoves)
+        #print("bestScore: ", bestScore)
+        #print("chosenIndex: ", chosenIndex)
 
         "Add more of your code here if you want to"
 
@@ -79,19 +79,35 @@ class ReflexAgent(Agent):
         newGhostStates = successorGameState.getGhostStates()
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
-        print("\n---evaluationFunction---")
-        print("successorGameState: ", successorGameState)
-        print("newPos: ", newPos)
-        print("newFood: ", newFood)
-        print("newGhostStates: ", newGhostStates)
-        print("newScaredTimes: ", newScaredTimes)
-        print("successorGameState.getScore(): ", successorGameState.getScore())
+        #print("\n---evaluationFunction---")
+        #print("successorGameState: ", successorGameState)
+        #print("newPos: ", newPos)
+        #print("newFood: ", newFood)
+        #print("newGhostStates: ", newGhostStates)
+        #print("newScaredTimes: ", newScaredTimes)
+        #print("successorGameState.getScore(): ", successorGameState.getScore())
 
         "*** YOUR CODE HERE ***"
-        # getAction 함수에서 호출됨. action의 점수를 리턴함.
+        # getAction 함수에서 호출됨. action에 대한 점수를 리턴함.
 
+        newScore = successorGameState.getScore()
 
-        return successorGameState.getScore()
+        # ghost에 대한 처리
+        # ghost와 거리가 멀다면 높은 점수
+        #newGhostPos = successorGameState.getGhostPosition(1)
+        #print("newGhostPos: ", newGhostPos)
+        # -> 따로 처리가 없어도 맞아서 구현하지 않음.
+
+        # food에 대한 처리
+        # food와 거리가 가깝다면 높은 점수
+        foods = newFood.asList()
+        dis = 2**63-1
+        for food in foods:
+            dis = min(dis, util.manhattanDistance(newPos, food))
+        
+        newScore += 1 / dis 
+
+        return newScore
 
 def scoreEvaluationFunction(currentGameState: GameState):
     """
