@@ -235,36 +235,27 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         
         # max or min
         if agentIndex == 0: # max
-            return self.maxValue(gameState, depth, agentIndex, maxBest, minBest)
+            list = []
+            legalMoves = gameState.getLegalActions(agentIndex)
+            #select = (-1e9, None)
+            for action in legalMoves:
+                select = (self.minimax(gameState.generateSuccessor(agentIndex, action), depth, agentIndex + 1, maxBest, minBest)[0], action)
+                list.append(select)
+                if select[0] > minBest[0]:
+                    return select
+                maxBest = max(maxBest, select)
+            return max(list)
         else: # min
-            return self.minValue(gameState, depth, agentIndex, maxBest, minBest)
-
-    
-    # max
-    def maxValue(self, gameState: GameState, depth, agentIndex, maxBest, minBest):
-        list = []
-        legalMoves = gameState.getLegalActions(agentIndex)
-        #select = (-1e9, None)
-        for action in legalMoves:
-            select = (self.minimax(gameState.generateSuccessor(agentIndex, action), depth, agentIndex + 1, maxBest, minBest)[0], action)
-            list.append(select)
-            if select[0] > minBest[0]:
-                return select
-            maxBest = max(maxBest, select)
-        return max(list)
-            
-    # min
-    def minValue(self, gameState: GameState, depth, agentIndex, maxBest, minBest):
-        list = []
-        legalMoves = gameState.getLegalActions(agentIndex)
-        #select = (1e9, None)
-        for action in legalMoves:
-            select = (self.minimax(gameState.generateSuccessor(agentIndex, action), depth, agentIndex + 1, maxBest, minBest)[0], action)
-            list.append(select)
-            if select[0] < maxBest[0]:
-                return select
-            minBest = min(minBest, select)
-        return min(list)
+            list = []
+            legalMoves = gameState.getLegalActions(agentIndex)
+            #select = (1e9, None)
+            for action in legalMoves:
+                select = (self.minimax(gameState.generateSuccessor(agentIndex, action), depth, agentIndex + 1, maxBest, minBest)[0], action)
+                list.append(select)
+                if select[0] < maxBest[0]:
+                    return select
+                minBest = min(minBest, select)
+            return min(list)
 
 # Q4: Expectimax - unsolved #
 class ExpectimaxAgent(MultiAgentSearchAgent):
@@ -280,7 +271,38 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         legal moves.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+    
+        action = self.Expectimax(gameState, 0, 0)[1]
+        return action
+
+    def Expectimax(self, gameState: GameState, depth, agentIndex):
+        # 마지막 ghost 라면 - depth 설정 및 agentIndex 초기화
+        if agentIndex == gameState.getNumAgents():
+            depth += 1
+            agentIndex = 0
+
+        # 종료 조건
+        if gameState.isWin() or gameState.isLose() or depth == self.depth:
+            return (self.evaluationFunction(gameState), None)
+        
+        # max or min
+        if agentIndex == 0: # max
+            list = []
+            legalMoves = gameState.getLegalActions(agentIndex)
+            for action in legalMoves:
+                list.append((self.Expectimax(gameState.generateSuccessor(agentIndex, action), depth, agentIndex + 1)[0], action))
+            return max(list)
+        else: # min
+            list = []
+            legalMoves = gameState.getLegalActions(agentIndex)
+            scoreSum = 0
+            for action in legalMoves:
+                select = (self.Expectimax(gameState.generateSuccessor(agentIndex, action), depth, agentIndex + 1)[0], action)
+                scoreSum += select[0]
+                list.append(select)
+            scoreAvg = scoreSum / len(list)
+            return [scoreAvg]
+
 
 # Q5: 평가 함수 - unsolved #
 def betterEvaluationFunction(currentGameState: GameState):
@@ -291,7 +313,39 @@ def betterEvaluationFunction(currentGameState: GameState):
     DESCRIPTION: <write something here so we know what you did>
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    #successorGameState = currentGameState.generatePacmanSuccessor(action)
+    PacmanPos = currentGameState.getPacmanPosition()
+    food = currentGameState.getFood()
+    ghostPoss = currentGameState.getGhostPositions()
+    ghostStates = currentGameState.getGhostStates()
+    scaredTimes = [ghostState.scaredTimer for ghostState in ghostStates]
+
+    newScore = currentGameState.getScore()
+
+    # food에 대한 처리
+    # food와 거리가 가깝다면 높은 점수
+    foods = food.asList()
+    dis = 1e9
+    for food in foods:
+        dis = min(dis, util.manhattanDistance(PacmanPos, food))
+        
+    newScore += (1 / dis) * 5
+
+    # ghost에 대한 처리
+    # ghost와 거리가 멀다면 높은 점수
+    dis = 1e9
+    for ghostPos in ghostPoss:
+        dis = min(dis, util.manhattanDistance(PacmanPos, ghostPos))
+
+    newScore += dis * 0.5
+
+    # scaredTimes에 대한 처리
+    for scaredTime in scaredTimes:
+        newScore += scaredTime
+
+
+    return newScore
 
 # Abbreviation
 better = betterEvaluationFunction
