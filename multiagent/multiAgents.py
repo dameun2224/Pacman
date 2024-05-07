@@ -138,7 +138,7 @@ class MultiAgentSearchAgent(Agent):
         self.evaluationFunction = util.lookup(evalFn, globals())
         self.depth = int(depth)
 
-# Q2: minimax - unsolved #
+# Q2: minimax - solved #
 class MinimaxAgent(MultiAgentSearchAgent):
     """
     Your minimax agent (question 2)
