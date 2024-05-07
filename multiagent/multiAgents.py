@@ -19,6 +19,7 @@ import random, util
 from game import Agent
 from pacman import GameState
 
+# Q1: Reflex Agent - solved #
 class ReflexAgent(Agent):
     """
     A reflex agent chooses an action at each choice point by examining
@@ -45,7 +46,7 @@ class ReflexAgent(Agent):
         # Choose one of the best actions
         scores = [self.evaluationFunction(gameState, action) for action in legalMoves]
         bestScore = max(scores)
-        bestIndices = [index for index in range(len(scores)) if scores[index] == bestScore]
+        bestIndices = [index for index in range(len(scores)) if scores[index] == bestScore] # bestScore의 index 선택
         chosenIndex = random.choice(bestIndices) # Pick randomly among the best
 
         #print("\n---getAction---")
@@ -55,7 +56,7 @@ class ReflexAgent(Agent):
 
         "Add more of your code here if you want to"
 
-        return legalMoves[chosenIndex]
+        return legalMoves[chosenIndex] # besScore의 인덱스 action
 
     def evaluationFunction(self, currentGameState: GameState, action):
         """
@@ -94,14 +95,12 @@ class ReflexAgent(Agent):
 
         # ghost에 대한 처리
         # ghost와 거리가 멀다면 높은 점수
-        #newGhostPos = successorGameState.getGhostPosition(1)
-        #print("newGhostPos: ", newGhostPos)
         # -> 따로 처리가 없어도 맞아서 구현하지 않음.
 
         # food에 대한 처리
         # food와 거리가 가깝다면 높은 점수
         foods = newFood.asList()
-        dis = 2**63-1
+        dis = 1e9
         for food in foods:
             dis = min(dis, util.manhattanDistance(newPos, food))
         
@@ -139,6 +138,7 @@ class MultiAgentSearchAgent(Agent):
         self.evaluationFunction = util.lookup(evalFn, globals())
         self.depth = int(depth)
 
+# Q2: minimax - unsolved #
 class MinimaxAgent(MultiAgentSearchAgent):
     """
     Your minimax agent (question 2)
@@ -168,7 +168,42 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Returns whether or not the game state is a losing state
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # Collect legal moves and successor states
+        
+        result = self.minimax(gameState, 0, 0)
+        action = result[1]
+
+        return action
+
+    def minimax(self, gameState: GameState, depth, agentIndex):
+        # 마지막 ghost 라면
+        if agentIndex == gameState.getNumAgents():
+            depth += 1
+            agentIndex = 0
+            
+        # 종료조건
+        if gameState.isWin() or gameState.isLose() or depth == self.depth:
+            return (self.evaluationFunction(gameState), None)
+        
+        # 종료 조건 확인 문제로 답이 달라 위로 올림
+        # if agentIndex == gameState.getNumAgents():
+        #     depth += 1
+        #     agentIndex = 0
+
+        # max or min
+        if agentIndex == 0: # max
+            legalMoves = gameState.getLegalActions(agentIndex)
+            list = []
+            for action in legalMoves:
+                list.append((self.minimax(gameState.generateSuccessor(agentIndex, action), depth, agentIndex + 1)[0], action)) # 노드 생성
+            return max(list)
+        else: # min
+            legalMoves = gameState.getLegalActions(agentIndex)
+            list = []
+            for action in legalMoves:
+                list.append((self.minimax(gameState.generateSuccessor(agentIndex, action), depth, agentIndex + 1)[0], action)) # 노드 생성
+            return min(list)
+
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
