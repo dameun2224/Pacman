@@ -204,19 +204,69 @@ class MinimaxAgent(MultiAgentSearchAgent):
                 list.append((self.minimax(gameState.generateSuccessor(agentIndex, action), depth, agentIndex + 1)[0], action)) # 노드 생성
             return min(list)
 
-
+# Q3: 알파-베타 가지치기 - solved #
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
     Your minimax agent with alpha-beta pruning (question 3)
     """
+
+    # 처음에 select와 minBest or maxBest를 그냥 비교해서 틀림.
+    # 인덱스 0번, 점수만 비교해서 맞음
 
     def getAction(self, gameState: GameState):
         """
         Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
 
+        action = self.minimax(gameState, 0, 0, (-1e9, None), (1e9, None))[1]
+
+        return action
+
+    def minimax(self, gameState: GameState, depth, agentIndex, maxBest, minBest):
+        # 마지막 ghost 라면 - depth 설정 및 agentIndex 초기화
+        if agentIndex == gameState.getNumAgents():
+            depth += 1
+            agentIndex = 0
+
+        # 종료 조건
+        if gameState.isWin() or gameState.isLose() or depth == self.depth:
+            return (self.evaluationFunction(gameState), None)
+        
+        # max or min
+        if agentIndex == 0: # max
+            return self.maxValue(gameState, depth, agentIndex, maxBest, minBest)
+        else: # min
+            return self.minValue(gameState, depth, agentIndex, maxBest, minBest)
+
+    
+    # max
+    def maxValue(self, gameState: GameState, depth, agentIndex, maxBest, minBest):
+        list = []
+        legalMoves = gameState.getLegalActions(agentIndex)
+        #select = (-1e9, None)
+        for action in legalMoves:
+            select = (self.minimax(gameState.generateSuccessor(agentIndex, action), depth, agentIndex + 1, maxBest, minBest)[0], action)
+            list.append(select)
+            if select[0] > minBest[0]:
+                return select
+            maxBest = max(maxBest, select)
+        return max(list)
+            
+    # min
+    def minValue(self, gameState: GameState, depth, agentIndex, maxBest, minBest):
+        list = []
+        legalMoves = gameState.getLegalActions(agentIndex)
+        #select = (1e9, None)
+        for action in legalMoves:
+            select = (self.minimax(gameState.generateSuccessor(agentIndex, action), depth, agentIndex + 1, maxBest, minBest)[0], action)
+            list.append(select)
+            if select[0] < maxBest[0]:
+                return select
+            minBest = min(minBest, select)
+        return min(list)
+
+# Q4: Expectimax - unsolved #
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
       Your expectimax agent (question 4)
@@ -232,6 +282,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         "*** YOUR CODE HERE ***"
         util.raiseNotDefined()
 
+# Q5: 평가 함수 - unsolved #
 def betterEvaluationFunction(currentGameState: GameState):
     """
     Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
