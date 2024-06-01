@@ -257,7 +257,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                 minBest = min(minBest, select)
             return min(list)
 
-# Q4: Expectimax - unsolved #
+# Q4: Expectimax - solved #
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
       Your expectimax agent (question 4)
@@ -285,14 +285,14 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         if gameState.isWin() or gameState.isLose() or depth == self.depth:
             return (self.evaluationFunction(gameState), None)
         
-        # max or min
+        # max or expecter
         if agentIndex == 0: # max
             list = []
             legalMoves = gameState.getLegalActions(agentIndex)
             for action in legalMoves:
                 list.append((self.Expectimax(gameState.generateSuccessor(agentIndex, action), depth, agentIndex + 1)[0], action))
             return max(list)
-        else: # min
+        else: # expecter - 평균 값을 반환
             list = []
             legalMoves = gameState.getLegalActions(agentIndex)
             scoreSum = 0
@@ -304,7 +304,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
             return [scoreAvg]
 
 
-# Q5: 평가 함수 - unsolved #
+# Q5: 평가 함수 - solved #
 def betterEvaluationFunction(currentGameState: GameState):
     """
     Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
@@ -322,6 +322,9 @@ def betterEvaluationFunction(currentGameState: GameState):
     scaredTimes = [ghostState.scaredTimer for ghostState in ghostStates]
 
     newScore = currentGameState.getScore()
+
+    # 위 함수에서 따옴.
+    # 숫자를 조정해가며 구현함
 
     # food에 대한 처리
     # food와 거리가 가깝다면 높은 점수
