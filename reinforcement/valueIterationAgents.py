@@ -103,11 +103,10 @@ class ValueIterationAgent(ValueEstimationAgent):
         """
 
         q_value = 0
-        lists = self.mdp.getTransitionStatesAndProbs(state, action)
 
         # nxt_state = s′, prob = T(s,a,s′)
         # self.mdp.getReward(state, action, nxt_state) = R(s,a,s′), self.discount = γ, self.values[nxt_state] = V(s′)
-        for nxt_state, prob in lists: 
+        for nxt_state, prob in self.mdp.getTransitionStatesAndProbs(state, action): 
             cur_value = self.mdp.getReward(state, action, nxt_state) + self.discount * self.values[nxt_state]
             q_value += prob * cur_value
 
@@ -159,7 +158,7 @@ class ValueIterationAgent(ValueEstimationAgent):
     def getQValue(self, state, action):
         return self.computeQValueFromValues(state, action)
 
-
+# Q4 #
 class PrioritizedSweepingValueIterationAgent(ValueIterationAgent):
     """
         * Please read learningAgents.py before reading this.*
@@ -178,5 +177,55 @@ class PrioritizedSweepingValueIterationAgent(ValueIterationAgent):
         ValueIterationAgent.__init__(self, mdp, discount, iterations)
 
     def runValueIteration(self):
-        "*** YOUR CODE HERE ***"
+        max_values = util.Counter()
+        states = self.mdp.getStates()
+
+        # predecessors 계산
+        predecessors = {}
+        for state in states:
+            predecessors[state] = set()
+
+        for state in states:
+            if self.mdp.isTerminal(state):
+                continue
+            for action in self.mdp.getPossibleActions(state):
+                for next_state, prob in self.mdp.getTransitionStatesAndProbs(state, action):
+                    if prob > 0:
+                        predecessors[next_state].add(state)
+                        
+        # pq 채우기
+        pq = util.PriorityQueue()
+        for state in states:
+            if self.mdp.isTerminal(state):
+                continue
+            current_value = self.values[state]
+            max_value = max([self.computeQValueFromValues(state, action)
+                             for action in self.mdp.getPossibleActions(state)])
+            diff = abs(current_value - max_value)
+            pq.push(state, -diff)
+        
+        # iterations 동안 반복
+        for i in range(self.iterations):
+            if pq.isEmpty():
+                break
+
+            state = pq.pop()
+
+            if not self.mdp.isTerminal(state):
+                self.values[state] = max([self.computeQValueFromValues(state, action)
+                                          for action in self.mdp.getPossibleActions(state)])
+
+            # 전임자 상태 갱신
+            for predecessor in predecessors[state]:
+                if not self.mdp.isTerminal(predecessor):
+                    current_value = self.values[predecessor]
+                    max_value = max([self.computeQValueFromValues(predecessor, action)
+                                     for action in self.mdp.getPossibleActions(predecessor)])
+                    diff = abs(current_value - max_value)
+                    if diff > self.theta:
+                        pq.update(predecessor, -diff)
+
+                
+
+
 
