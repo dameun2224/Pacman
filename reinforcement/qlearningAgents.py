@@ -18,6 +18,7 @@ from featureExtractors import *
 
 import random,util,math
 
+# Q5 - solved #
 class QLearningAgent(ReinforcementAgent):
     """
       Q-Learning Agent
@@ -90,6 +91,7 @@ class QLearningAgent(ReinforcementAgent):
         return None
         #util.raiseNotDefined()
 
+    # Q6 - solved #
     def getAction(self, state):
         """
           Compute the action to take in the current state.  With
