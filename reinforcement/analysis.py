@@ -19,9 +19,10 @@
 # Set the given parameters to obtain the specified policies through
 # value iteration.
 
+# Q2 - Solved #
 def question2():
     answerDiscount = 0.9
-    answerNoise = 0.2
+    answerNoise = 0
     return answerDiscount, answerNoise
 
 def question3a():

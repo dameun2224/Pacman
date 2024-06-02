@@ -32,7 +32,7 @@ from learningAgents import ValueEstimationAgent
 import collections
 
 
-# Q1 - sloved #
+# Q1 - Solved #
 class ValueIterationAgent(ValueEstimationAgent):
     """
         * Please read learningAgents.py before reading this.*
