@@ -31,6 +31,8 @@ import mdp, util
 from learningAgents import ValueEstimationAgent
 import collections
 
+
+# Q1 - sloved #
 class ValueIterationAgent(ValueEstimationAgent):
     """
         * Please read learningAgents.py before reading this.*
@@ -63,6 +65,22 @@ class ValueIterationAgent(ValueEstimationAgent):
         # Write value iteration code here
         "*** YOUR CODE HERE ***"
 
+        """
+        총 iterations 만큼 반복
+        mdp의 각 상태에서, 가능한 모든 action에 대해 Q-값을 계산하고 최댓값을 max_value에 저장
+        각 상태의 max_value를 new_value에 저장하고, 각 i마다 values를 new_values로 업데이트
+        """
+
+        for i in range(0, self.iterations):
+            new_values = util.Counter()
+            for state in self.mdp.getStates():
+                if self.mdp.isTerminal(state):
+                    continue
+                max_value = float('-inf')
+                for action in self.mdp.getPossibleActions(state):
+                    max_value = max(max_value, self.computeQValueFromValues(state, action))
+                new_values[state] = max_value
+            self.values = new_values
 
     def getValue(self, state):
         """
@@ -70,14 +88,32 @@ class ValueIterationAgent(ValueEstimationAgent):
         """
         return self.values[state]
 
-
     def computeQValueFromValues(self, state, action):
         """
           Compute the Q-value of action in state from the
           value function stored in self.values.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+
+        """
+        self.values에 의해 제공된 가치 함수에 따라 (state, action) 쌍의 Qvalue 리턴
+        getQValue 함수에서 호출됨
+
+        Q(s,a)=∑s′T(s,a,s′)[R(s,a,s′)+γV(s′)]
+        """
+
+        q_value = 0
+        lists = self.mdp.getTransitionStatesAndProbs(state, action)
+
+        # nxt_state = s′, prob = T(s,a,s′)
+        # self.mdp.getReward(state, action, nxt_state) = R(s,a,s′), self.discount = γ, self.values[nxt_state] = V(s′)
+        for nxt_state, prob in lists: 
+            cur_value = self.mdp.getReward(state, action, nxt_state) + self.discount * self.values[nxt_state]
+            q_value += prob * cur_value
+
+        return q_value
+
+        #util.raiseNotDefined()
 
     def computeActionFromValues(self, state):
         """
@@ -89,7 +125,29 @@ class ValueIterationAgent(ValueEstimationAgent):
           terminal state, you should return None.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+
+        """
+        self.values에 의해 제공된 가치 함수에 따라 최적의 action을 계산
+        getPolicy, getAction 함수에서 호출됨
+        해당 state에서 가능한 모든 action에서 최적의 action 반환
+        """
+
+        if self.mdp.isTerminal(state):
+            return None
+
+        actions = self.mdp.getPossibleActions(state)
+        max_value = float('-inf')
+        max_action = None
+
+        for action in actions:
+            cur_value = self.getQValue(state, action)
+            if(max_value < self.getQValue(state, action)):
+                max_value = cur_value
+                max_action = action
+                
+        return max_action
+            
+        #util.raiseNotDefined()
 
     def getPolicy(self, state):
         return self.computeActionFromValues(state)
