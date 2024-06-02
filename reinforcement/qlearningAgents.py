@@ -43,6 +43,7 @@ class QLearningAgent(ReinforcementAgent):
         ReinforcementAgent.__init__(self, **args)
 
         "*** YOUR CODE HERE ***"
+        self.qvalues = util.Counter()
 
     def getQValue(self, state, action):
         """
@@ -51,8 +52,8 @@ class QLearningAgent(ReinforcementAgent):
           or the Q node value otherwise
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
-
+        return self.qvalues[state, action] # 존재하지 않으면 자동으로 0 반환
+        #util.raiseNotDefined()
 
     def computeValueFromQValues(self, state):
         """
@@ -62,7 +63,17 @@ class QLearningAgent(ReinforcementAgent):
           terminal state, you should return a value of 0.0.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        """
+        V(s)=maxaQ(s,a)
+        Q-값 중 최댓값 반환, 없으면 0.0 반환
+        """
+        legals = self.getLegalActions(state)
+
+        if not legals:
+            return 0.0
+        
+        return max([self.getQValue(state, action) for action in legals])
+        #util.raiseNotDefined()
 
     def computeActionFromQValues(self, state):
         """
@@ -71,7 +82,13 @@ class QLearningAgent(ReinforcementAgent):
           you should return None.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        legals = self.getLegalActions(state)
+        max_value = self.computeValueFromQValues(state) # 최댓값
+        for action in legals:
+            if max_value == self.getQValue(state, action):
+                return action
+        return None
+        #util.raiseNotDefined()
 
     def getAction(self, state):
         """
@@ -88,7 +105,10 @@ class QLearningAgent(ReinforcementAgent):
         legalActions = self.getLegalActions(state)
         action = None
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        if util.flipCoin(self.epsilon): # epsilon 만큼의 확률로 무작위 행동 반환
+            return random.choice(legalActions)
+        return self.computeActionFromQValues(state)
+        #util.raiseNotDefined()
 
         return action
 
@@ -102,7 +122,16 @@ class QLearningAgent(ReinforcementAgent):
           it will be called on your behalf
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        """
+        Q(s,a) ← Q(s,a) + α[r+γmax_{a'}Q(s',a')-Q(s,a)]
+        Q(s,a) = self.qvalues[state, action]
+        α = self.alpha, r = reward, γ = self.discount
+        max_{a'} Q(s', a') = nextState의 legals에 대한 최대 qvalue
+        """
+        qvalue = self.qvalues[state, action]
+        nxt_qvalue = self.computeValueFromQValues(nextState)
+        self.qvalues[state, action] = qvalue + self.alpha * (reward + self.discount * nxt_qvalue - qvalue)
+        #util.raiseNotDefined()
 
     def getPolicy(self, state):
         return self.computeActionFromQValues(state)
