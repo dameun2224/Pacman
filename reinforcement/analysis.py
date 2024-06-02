@@ -73,7 +73,7 @@ def question3e():
     return answerDiscount, answerNoise, answerLivingReward
     # If not possible, return 'NOT POSSIBLE'
 
-# Q7 #
+# Q7 - solved #
 def question8():
     return 'NOT POSSIBLE'
     # If not possible, return 'NOT POSSIBLE'
