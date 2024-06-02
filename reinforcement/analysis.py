@@ -19,44 +19,57 @@
 # Set the given parameters to obtain the specified policies through
 # value iteration.
 
+"""
+discount: 낮을수록 가까운 보상
+noise: 행동의 불확실성
+living reward: 살아있는 동안 받는 보상. 음수라면 빨리 끝내려하고, 양수라면 오래 남아있으려한다.
+"""
+
 # Q2 - Solved #
 def question2():
     answerDiscount = 0.9
     answerNoise = 0
     return answerDiscount, answerNoise
 
-def question3a():
-    answerDiscount = None
-    answerNoise = None
-    answerLivingReward = None
+# Q3(3a ~ 3e) #
+
+# 절벽(-10)의 위험을 감수하면서 가까운 출구(+1)를 선호하는 유형
+def question3a(): 
+    answerDiscount = 0.2
+    answerNoise = 0
+    answerLivingReward = -1
     return answerDiscount, answerNoise, answerLivingReward
     # If not possible, return 'NOT POSSIBLE'
 
+# 절벽(-10)을 피하는 동시에 가까운 출구(+1)를 선호하는 유형
 def question3b():
-    answerDiscount = None
-    answerNoise = None
-    answerLivingReward = None
+    answerDiscount = 0.2
+    answerNoise = 0.2
+    answerLivingReward = -1
     return answerDiscount, answerNoise, answerLivingReward
     # If not possible, return 'NOT POSSIBLE'
 
+# 절벽(-10)의 위험을 감수하면서 먼 출구(+10)를 선호하는 유형
 def question3c():
-    answerDiscount = None
-    answerNoise = None
-    answerLivingReward = None
+    answerDiscount = 0.2
+    answerNoise = 0
+    answerLivingReward = 1
     return answerDiscount, answerNoise, answerLivingReward
     # If not possible, return 'NOT POSSIBLE'
 
+# 절벽(-10)을 피하는 동시에 먼 출구(+10)를 선호하는 유형
 def question3d():
-    answerDiscount = None
-    answerNoise = None
-    answerLivingReward = None
+    answerDiscount = 0.8
+    answerNoise = 0.2
+    answerLivingReward = -0.5
     return answerDiscount, answerNoise, answerLivingReward
     # If not possible, return 'NOT POSSIBLE'
 
+# 출구와 절벽을 모두 피하는 유형(즉, 에피소드가 종료되지 않아야 함)
 def question3e():
-    answerDiscount = None
-    answerNoise = None
-    answerLivingReward = None
+    answerDiscount = 0.2
+    answerNoise = 0
+    answerLivingReward = 20
     return answerDiscount, answerNoise, answerLivingReward
     # If not possible, return 'NOT POSSIBLE'
 
